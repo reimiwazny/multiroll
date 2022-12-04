@@ -6,12 +6,6 @@ Version: 1.0
 Date: 12/3/2022
 
 --- Usage Instructions ---
-
-Requirements:
-    Python 3.10.4 or greater
-
-Using the program:
-
 Number of Dice:
     Enter the number of dice to roll in this field. The number of dice must be an integer from 1 to 1000.
 
