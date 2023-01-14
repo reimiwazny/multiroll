@@ -173,10 +173,10 @@ def input_error():
 dice_select = [[sg.Radio('4', 'DICE', default=True, key='-4-'), sg.Radio('6','DICE', pad=(15,0), key='-6-')],
 			[sg.Radio('8','DICE', key='-8-'), sg.Radio('10','DICE',pad=(15,0), key='-10-')],
 			[sg.Radio('20','DICE', key='-20-'), sg.Radio('100','DICE',pad=(4,0), key='-100-')],
-			[sg.Radio('Custom','DICE', key='-CUSTOM-'), sg.InputText(size=6, tooltip='Maximum of 1000', key='-C_VAL-')]	]
+			[sg.Radio('Custom','DICE', key='-CUSTOM-'), sg.InputText(size=6, tooltip='Maximum of 1000', key='-C_VAL-', enable_events=True)]	]
 
 #selection window for the number of dice to roll
-num_dice = [	[sg.InputText(size=8, tooltip='Maximum of 1000', key='-DICE_NUM-')]	]
+num_dice = [	[sg.InputText(size=8, tooltip='Maximum of 1000', key='-DICE_NUM-', enable_events=True)]	]
 
 #organizational frame for the dice sides and quantity windows
 dice_window = [	[sg.Frame(title='Number of dice', layout = num_dice, size=(190, 60), element_justification='center')],
@@ -196,12 +196,12 @@ sum_results = [	[sg.Multiline(default_text='',tooltip='The sum of all dice rolle
 				sg.Multiline(default_text='',tooltip='The total of the dice roll + all modifiers', size=(7,1), disabled=True, no_scrollbar=True, key='-TOTAL-')]	]
 
 #window for entering flat increases or decreases to be added to the dice roll
-flat_mods = [	[sg.InputText(size=8, pad=(0,5), key='-ADD1-')],
-				[sg.InputText(size=8, pad=(0,5), key='-ADD2-')],
-				[sg.InputText(size=8, pad=(0,5), key='-ADD3-')],
-				[sg.InputText(size=8, pad=(0,5), key='-ADD4-')],
-				[sg.InputText(size=8, pad=(0,5), key='-ADD5-')],
-				[sg.InputText(size=8, pad=(0,5), key='-ADD6-')]	]
+flat_mods = [	[sg.InputText(size=8, pad=(0,5), key='-ADD1-', enable_events=True)],
+				[sg.InputText(size=8, pad=(0,5), key='-ADD2-', enable_events=True)],
+				[sg.InputText(size=8, pad=(0,5), key='-ADD3-', enable_events=True)],
+				[sg.InputText(size=8, pad=(0,5), key='-ADD4-', enable_events=True)],
+				[sg.InputText(size=8, pad=(0,5), key='-ADD5-', enable_events=True)],
+				[sg.InputText(size=8, pad=(0,5), key='-ADD6-', enable_events=True)]	]
 
 #organizational frame for the results display
 results_window = [	[sg.Frame(title='Individual Results', layout=indv_results, border_width=0)],
@@ -224,6 +224,24 @@ while True:
 	event, values = window.read()
 	if event == sg.WIN_CLOSED:
 		break
+	if event in ('-C_VAL-', '-DICE_NUM-'):
+		if not values[event].isnumeric():
+			window[event].update(''.join(list(x for x in values[event] if x.isnumeric())))
+		if window[event].get() != '':
+			if int(window[event].get()) < 1:
+				window[event].update(1)
+			elif int(window[event].get()) > 1000:
+				window[event].update(1000)
+	if event in add_mods:
+		if values[event] != '':
+			val = values[event]
+			if values[event][0] == '-':
+				first_char = '-'
+			else:
+				first_char = ''
+			if not values[event].isnumeric():
+				window[event].update(first_char + (''.join(list(x for x in values[event] if x.isnumeric()))))
+
 	if event == 'Roll':
 		if values['-DICE_NUM-'].isdigit():
 			if int(values['-DICE_NUM-']) > 1000 or int(values['-DICE_NUM-']) < 1:
